@@ -17,16 +17,11 @@ export async function getServerProfile() {
 
   let userQuery = await supabase
     .from("profiles")
-    .select("id, nama, alamat, created_at, updated_at")
+    .select("*")
     .eq("id", session.user.id)
     .maybeSingle();
-  let roleQuery = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", session.user.id)
-    .maybeSingle();
 
-  if (userQuery.error || !roleQuery.data?.role) return null;
+  if (userQuery.error) return null;
 
-  return { ...userQuery.data, role: roleQuery.data.role };
+  return userQuery.data;
 }
