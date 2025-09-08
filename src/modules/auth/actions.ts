@@ -63,6 +63,9 @@ export async function signupAction(payload: SignUpSchema) {
     nama: payload.name,
     alamat: payload.address,
     id: signUpQuery.data.user.id,
+    nik: payload.nik,
+    status_aktif: true,
+    role: "user",
   });
 
   if (profileQuery.error) {

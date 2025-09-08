@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUser } from "./browser-query";
 import { createClient } from "../supabase/client";
-import type { SignInSchema } from "./zod-schema";
-import { signinAction, signOutAction } from "./actions";
+import type { SignInSchema, SignUpSchema } from "./zod-schema";
+import { signinAction, signOutAction, signupAction } from "./actions";
 
 let client = createClient();
 
@@ -25,6 +25,17 @@ export function useSignIn() {
     },
     onSettled: async () => {
       await qc.invalidateQueries({ queryKey: ["get-user"] });
+    },
+  });
+}
+
+export function useSignUp() {
+  return useMutation({
+    mutationFn: async (payload: SignUpSchema) => {
+      let res = await signupAction(payload);
+      if (res.error) throw new Error(res.message);
+
+      return res.result;
     },
   });
 }

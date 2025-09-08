@@ -9,7 +9,19 @@ export const signInSchema = z.object({
 export type SignUpSchema = z.infer<typeof signUpSchema>;
 export const signUpSchema = z.object({
   email: z.email("Alamat email tidak valid"),
-  password: z.string().min(1, "Harap masukan password anda"),
+  password: z
+    .string()
+    .min(1, "Harap masukan password anda")
+    .min(6, "Minimal 6 karakter")
+    .regex(/[a-z]/, "Passwordd harus mengandung huruf kecil")
+    .regex(/[A-Z]/, "Passwordd harus mengandung huruf besar")
+    .regex(/[0-9]/, "Passwordd harus mengandung angka")
+    .regex(/[^a-zA-Z0-9]/, "Passwordd harus mengandung simbol"),
+  nik: z
+    .string()
+    .min(1, "Harap masukan NIK anda")
+    .regex(/^[0-9]+$/, "NIK harus berupa angka")
+    .regex(/^[0-9]{16}$/, "NIK harus 16 karakter"),
   name: z
     .string()
     .min(1, "Harap masukan nama anda")

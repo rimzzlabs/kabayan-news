@@ -1,10 +1,12 @@
 import {
   Card,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { SignInForm } from "./components/signin-form";
+import { ButtonLink } from "@/components/ui/button";
 
 export default function SignIn() {
   return (
@@ -18,6 +20,19 @@ export default function SignIn() {
         </CardHeader>
 
         <SignInForm />
+
+        <CardFooter className="justify-center border-t">
+          <p className="text-sm font-medium">
+            Belum punya akun?{" "}
+            <ButtonLink
+              variant="link"
+              href="/auth/signup"
+              className="px-0 h-auto underline"
+            >
+              Daftar
+            </ButtonLink>
+          </p>
+        </CardFooter>
       </Card>
     </section>
   );

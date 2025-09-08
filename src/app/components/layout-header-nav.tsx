@@ -3,7 +3,6 @@ import { LayoutHeaderNavItem } from "./layout-header-nav-item";
 let navigations = [
   { label: "Beranda", pathname: "/" },
   { label: "Aspirasi", pathname: "/aspiration" },
-  { label: "Tentang", pathname: "/about" },
 ];
 
 export function LayoutHeaderNav() {

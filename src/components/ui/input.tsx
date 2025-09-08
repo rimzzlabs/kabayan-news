@@ -20,7 +20,7 @@ const inputVariants = cva(
 
 function Input({
   className,
-  type,
+  type = "text",
   scale,
   ...props
 }: React.ComponentProps<"input"> & VariantProps<typeof inputVariants>) {
