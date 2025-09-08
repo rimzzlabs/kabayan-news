@@ -65,7 +65,7 @@ export async function signupAction(payload: SignUpSchema) {
     id: signUpQuery.data.user.id,
     nik: payload.nik,
     status_aktif: true,
-    role: "user",
+    role: "warga",
   });
 
   if (profileQuery.error) {
