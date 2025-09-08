@@ -1,5 +1,6 @@
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
+import { id } from "date-fns/locale";
 
 /**
  *
@@ -9,6 +10,14 @@ import { toZonedTime } from "date-fns-tz";
 export function formatDate(token = "dd MMM yyyy") {
   return (dateValue: Date | number | string) => {
     let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return format(toZonedTime(dateValue, tz), token);
+    return format(toZonedTime(dateValue, tz), token, { locale: id });
   };
+}
+
+export function formatDistance(dateValue: Date | number | string) {
+  let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return formatDistanceToNow(toZonedTime(dateValue, tz), {
+    locale: id,
+    addSuffix: true,
+  });
 }

@@ -1,36 +1,20 @@
-import { ButtonLink } from "@/components/ui/button";
-import Image from "next/image";
+import { Title } from "@/components/title";
+import { getServerNews } from "@/modules/news/query";
+import { createClient } from "@/modules/supabase/server";
+import { Fragment } from "react";
+import { NewsList } from "./components/news-list";
 
-export default function Home() {
+export default async function Home() {
+  let client = await createClient();
+  let news = await getServerNews(client);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li>
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-          <li>App already installed with Shadcn UI.</li>
-          <li>
-            Visit dashboard{" "}
-            <ButtonLink href="/dashboard" size="sm" variant="link">
-              visit &rarr;
-            </ButtonLink>
-          </li>
-        </ol>
-      </main>
+    <div className="pt-8">
+      <Title className="pb-4">
+        Berita Terkini<span className="sr-only">Kabayan News</span>
+      </Title>
+
+      <NewsList news={news} />
     </div>
   );
 }
