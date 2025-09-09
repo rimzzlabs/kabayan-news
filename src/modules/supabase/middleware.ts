@@ -27,7 +27,10 @@ export async function updateSession(request: NextRequest) {
 
   let skippedPages = skipAuthCheckPages.some((p) => p === pathname);
   let isNewsPage = pathname.startsWith("/news");
-  let isPublicPage = skippedPages || isNewsPage;
+  let isAspirationPage =
+    pathname.startsWith("/aspiration") && !pathname.endsWith("/new");
+
+  let isPublicPage = skippedPages || isNewsPage || isAspirationPage;
 
   if (isPublicPage) return supabaseResponse;
 

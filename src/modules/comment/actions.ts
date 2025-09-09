@@ -4,6 +4,7 @@ import { failedAction, successAction } from "@/lib/action";
 import { createClient } from "../supabase/server";
 import type { CreateCommentSchema } from "./zod-schema";
 import { match } from "ts-pattern";
+import { revalidatePath } from "next/cache";
 
 export async function createCommentAction(payload: CreateCommentSchema) {
   let client = await createClient();
@@ -26,6 +27,11 @@ export async function createCommentAction(payload: CreateCommentSchema) {
   if (res.error) {
     console.info(res.error);
     return failedAction("Gagal membuat komentar");
+  }
+  if (payload.newsType === "aspirasi") {
+    revalidatePath("/aspiration/[slug]", "page");
+  } else {
+    revalidatePath("/news/[slug]", "page");
   }
 
   return successAction({ newsId: payload.newsId });

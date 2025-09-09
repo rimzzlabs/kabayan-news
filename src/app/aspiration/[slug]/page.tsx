@@ -1,21 +1,24 @@
 import { Title } from "@/components/title";
 import { formatDate } from "@/lib/date";
-import { getServerNewsDetail } from "@/modules/news/query";
 import { createClient } from "@/modules/supabase/server";
 import { createClient as createBrowserClient } from "@/modules/supabase/client";
-import { A, F, pipe, S } from "@mobily/ts-belt";
+import { A, F, O, pipe, S } from "@mobily/ts-belt";
 import { ArrowLeft, Calendar1Icon, MessageCircleIcon } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
-import { getNews } from "@/modules/news/browser-query";
 import { ButtonLink } from "@/components/ui/button";
+import { getAspirations } from "@/modules/aspiration/browser-query";
+import { getServerAspirationDetail } from "@/modules/aspiration/query";
 import { ArticleCommentList } from "@/components/article-comment-list";
 import { ArticleDetailImage } from "@/components/article-detail-image";
 
 export async function generateStaticParams() {
   let client = createBrowserClient();
-  let news = await getNews(client, { limit: 100 });
+  let aspirations = await getAspirations(client, { limit: 100 });
+
   return pipe(
-    news,
+    aspirations.data,
+    O.fromNullable,
+    O.mapWithDefault([], F.identity),
     A.map((n) => ({ slug: n.slug })),
     F.toMutable,
   );
@@ -25,29 +28,32 @@ export default async function NewsPage(props: TPageProps) {
   let params = await props.params;
   let client = await createClient();
   let slug = params.slug;
-  if (!slug) redirect("/");
+  if (!slug) redirect("/aspiration");
 
-  let news = await getServerNewsDetail(client, slug);
-  if (!news) notFound();
+  let aspiration = await getServerAspirationDetail(client, slug);
+  if (!aspiration) notFound();
 
   return (
     <div className="max-w-prose mx-auto">
       <article className="pt-8 pb-10">
-        <ButtonLink href="/" variant="secondary">
+        <ButtonLink href="/aspiration" variant="secondary">
           <ArrowLeft />
           Kembali
         </ButtonLink>
 
         <section className="pt-3">
-          <ArticleDetailImage src={news.foto_url} alt={news.judul} />
+          <ArticleDetailImage
+            src={aspiration.foto_url}
+            alt={aspiration.judul}
+          />
 
           <div className="flex items-center gap-5 pt-2.5">
-            {news.tanggal_publikasi && (
+            {aspiration.tanggal_kirim && (
               <div className="inline-flex items-center gap-2 text-muted-foreground">
                 <Calendar1Icon className="size-4" />
                 <p className="text-sm font-medium">
                   {pipe(
-                    news.tanggal_publikasi,
+                    aspiration.tanggal_kirim,
                     formatDate("dd MMMM yyyy HH:mm"),
                   )}
                 </p>
@@ -57,19 +63,19 @@ export default async function NewsPage(props: TPageProps) {
             <div className="inline-flex items-center gap-2 text-muted-foreground">
               <MessageCircleIcon className="size-4" />
               <p className="text-sm font-medium">
-                {pipe(news.commentsCount, String, S.append(" Komentar"))}
+                {pipe(aspiration.commentsCount, String, S.append(" Komentar"))}
               </p>
             </div>
           </div>
         </section>
 
         <section className="pt-5 prose prose-neutral dark:prose-invert">
-          <Title>{news.judul}</Title>
-          <p>{news.isi}</p>
+          <Title>{aspiration.judul}</Title>
+          <p>{aspiration.deskripsi}</p>
         </section>
       </article>
 
-      <ArticleCommentList type="berita" newsId={news.id} />
+      <ArticleCommentList type="aspirasi" newsId={aspiration.id} />
     </div>
   );
 }

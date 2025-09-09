@@ -107,7 +107,5 @@ export async function getComments(
     res = res.abortSignal(options.signal);
   }
 
-  let comments = await res;
-
-  return comments.data ?? [];
+  return await res;
 }

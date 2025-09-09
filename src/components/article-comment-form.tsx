@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { withSonnerPromise } from "@/lib/sonner";
-import { useCreateComment } from "@/modules/news/hooks";
+import { useCreateComment } from "@/modules/comment/hooks";
 import {
   type CreateCommentSchema,
   createCommentSchema,
-} from "@/modules/news/zod-schema";
+} from "@/modules/comment/zod-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, SendHorizonal } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -26,7 +26,7 @@ type NewsCommentFormProps = {
   userId?: string;
 };
 
-export function NewsCommentForm(props: NewsCommentFormProps) {
+export function ArticleCommentForm(props: NewsCommentFormProps) {
   let createComment = useCreateComment();
 
   let form = useForm<CreateCommentSchema>({

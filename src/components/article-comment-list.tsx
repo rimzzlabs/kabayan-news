@@ -1,19 +1,32 @@
 "use client";
 
 import { useIsClient } from "@/hooks/use-is-client";
-import { useComments } from "@/modules/news/hooks";
+import { useInfiniteComments } from "@/modules/comment/hooks";
 import { ChevronsDown, Loader } from "lucide-react";
-import { NewsCommentListItem } from "./news-comment-list-item";
+import { ArticleCommentListItem } from "./article-comment-list-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { NewsCommentForm } from "./news-comment-form";
+import { ArticleCommentForm } from "./article-comment-form";
 import { useUser } from "@/modules/auth/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
+import { A, F, O, pipe } from "@mobily/ts-belt";
 
-export function NewsCommentList(props: { newsId: string }) {
+type ArticleCommentListProps = {
+  newsId: string;
+  type: "berita" | "aspirasi";
+};
+
+export function ArticleCommentList(props: ArticleCommentListProps) {
   let isClient = useIsClient();
-  let commentsQuery = useComments({ newsId: props.newsId });
   let userQuery = useUser();
+  let commentsQuery = useInfiniteComments(
+    props.type === "berita"
+      ? {
+          type: "berita",
+          newsId: props.newsId,
+        }
+      : { type: "aspirasi", aspirationId: props.newsId },
+  );
 
   if (!isClient || !commentsQuery.isSuccess) {
     return (
@@ -34,7 +47,28 @@ export function NewsCommentList(props: { newsId: string }) {
     );
   }
 
-  let comments = commentsQuery.data;
+  let disableLoadMoreButton =
+    !commentsQuery.hasNextPage ||
+    commentsQuery.isPending ||
+    commentsQuery.isFetchingNextPage;
+
+  let loadMoreButtonLabel = commentsQuery.hasNextPage
+    ? "Muat lebih banyak komentar"
+    : "Sudah memuat semua komentar";
+
+  let comments = pipe(
+    commentsQuery.data.pages,
+    O.fromNullable,
+    O.mapWithDefault([], F.identity),
+    A.flatMap((d) => d.result),
+    O.mapWithDefault([], F.identity),
+    F.toMutable,
+  );
+
+  let onClickLoadMore = async () => {
+    console.info("I run");
+    await commentsQuery.fetchNextPage();
+  };
 
   return (
     <section className="pt-4 border-t pb-10">
@@ -53,13 +87,18 @@ export function NewsCommentList(props: { newsId: string }) {
       {comments.length <= 2 ? (
         <div className="py-3 pl-1 pr-3 grid gap-3">
           {comments.map((comment) => (
-            <NewsCommentListItem key={comment.id} {...comment} />
+            <ArticleCommentListItem key={comment.id} {...comment} />
           ))}
 
           <div className="pb-2">
-            <Button size="sm" variant="outline">
-              <ChevronsDown />
-              Muat komentar
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onClickLoadMore}
+              disabled={disableLoadMoreButton}
+            >
+              {commentsQuery.hasNextPage ? <ChevronsDown /> : null}
+              {loadMoreButtonLabel}
             </Button>
           </div>
         </div>
@@ -67,28 +106,35 @@ export function NewsCommentList(props: { newsId: string }) {
         <ScrollArea className="h-96 mb-3">
           <div className="py-3 pl-1 pr-3 grid gap-3">
             {comments.map((comment) => (
-              <NewsCommentListItem key={comment.id} {...comment} />
+              <ArticleCommentListItem key={comment.id} {...comment} />
             ))}
 
             <div className="pb-2">
-              <Button size="sm" variant="outline">
-                <ChevronsDown />
-                Muat komentar
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onClickLoadMore}
+                disabled={disableLoadMoreButton}
+              >
+                {commentsQuery.hasNextPage ? <ChevronsDown /> : null}
+                {loadMoreButtonLabel}
               </Button>
             </div>
           </div>
         </ScrollArea>
       )}
 
-      {!userQuery.isSuccess ? (
+      {!userQuery.isSuccess && (
         <div className="h-72 grid place-items-center">
           <Skeleton className="h-60 w-full grid place-items-center">
             <Loader className="animate-spin size-5 stroke-muted-foreground" />
           </Skeleton>
         </div>
-      ) : (
-        <NewsCommentForm
-          newsType="berita"
+      )}
+
+      {userQuery.isSuccess && (
+        <ArticleCommentForm
+          newsType={props.type}
           newsId={props.newsId}
           userId={userQuery.data?.id}
           key={userQuery.data?.id}

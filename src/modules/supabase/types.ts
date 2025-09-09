@@ -16,49 +16,42 @@ export type Database = {
     Tables: {
       aspirasi: {
         Row: {
-          admin_id: string | null
-          deskripsi: string | null
+          deskripsi: string
           foto_url: string | null
           id: string
           judul: string
           kategori_id: string | null
           lokasi: string | null
+          slug: string
           status: string | null
           tanggal_kirim: string | null
           user_id: string | null
         }
         Insert: {
-          admin_id?: string | null
-          deskripsi?: string | null
+          deskripsi: string
           foto_url?: string | null
           id?: string
           judul: string
           kategori_id?: string | null
           lokasi?: string | null
+          slug: string
           status?: string | null
           tanggal_kirim?: string | null
           user_id?: string | null
         }
         Update: {
-          admin_id?: string | null
-          deskripsi?: string | null
+          deskripsi?: string
           foto_url?: string | null
           id?: string
           judul?: string
           kategori_id?: string | null
           lokasi?: string | null
+          slug?: string
           status?: string | null
           tanggal_kirim?: string | null
           user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "aspirasi_admin_id_fkey"
-            columns: ["admin_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "aspirasi_kategori_id_fkey"
             columns: ["kategori_id"]

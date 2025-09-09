@@ -13,7 +13,11 @@ export function LayoutHeaderNavItem(props: LayoutHeaderNavItemProps) {
   let pathname = usePathname();
 
   let isPathnameActive = (p: string) => {
-    return pathname.includes(p) && pathname.endsWith(p);
+    if (p === "/") return pathname === p;
+
+    return (
+      (pathname.includes(p) && pathname.endsWith(p)) || pathname.startsWith(p)
+    );
   };
 
   return (

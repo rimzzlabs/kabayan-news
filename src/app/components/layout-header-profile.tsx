@@ -12,13 +12,7 @@ import { useIsClient } from "@/hooks/use-is-client";
 import { toInitial } from "@/lib/string";
 import { useUser } from "@/modules/auth/hooks";
 import { pipe } from "@mobily/ts-belt";
-import {
-  Loader,
-  LogInIcon,
-  MapPinIcon,
-  PhoneIcon,
-  User2Icon,
-} from "lucide-react";
+import { Loader, LogInIcon, MapPinIcon, User2Icon } from "lucide-react";
 import { LayoutHeaderProfileLogout } from "./layout-header-profile-logout";
 
 export function LayoutHeaderProfile() {
@@ -45,7 +39,7 @@ export function LayoutHeaderProfile() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="lg" variant="outline" className="px-3">
+        <Button size="lg" variant="outline" className="px-2 lg:px-3">
           <Avatar>
             <AvatarImage
               src={user.data.foto_profil ?? undefined}
@@ -56,7 +50,9 @@ export function LayoutHeaderProfile() {
             </AvatarFallback>
           </Avatar>
 
-          {user.data?.nama ?? "User Profile"}
+          <span className="sr-only lg:not-sr-only">
+            {user.data?.nama ?? "User Profile"}
+          </span>
         </Button>
       </PopoverTrigger>
 
@@ -67,11 +63,6 @@ export function LayoutHeaderProfile() {
           <div className="inline-flex items-center gap-2 text-muted-foreground">
             <User2Icon className="size-4 shrink-0" />
             <p className="text-sm font-medium">{user.data.nama}</p>
-          </div>
-
-          <div className="inline-flex items-center gap-2 text-muted-foreground">
-            <PhoneIcon className="size-4 shrink-0" />
-            <p className="text-sm font-medium">{user.data.no_hp}</p>
           </div>
 
           <div className="inline-flex items-start gap-2 text-muted-foreground">

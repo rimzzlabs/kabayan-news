@@ -13,13 +13,16 @@ export async function uploadImage(fd: FormData) {
 
   let userId = session.user.id;
 
-  let res = await uploadFile({ file, userId });
+  let res = await uploadFile({ file, userId, bucketName: "foto-aspirasi" });
 
   if (!res) return failedAction("Upload failed");
 
   return successAction({ publicUrl: res.publicUrl, filePath: res.fullPath });
 }
 
-export async function deleteImage(fullPath: string) {
-  return await deleteFile(fullPath);
+export async function deleteImage(options: {
+  fullPath: string;
+  bucketName: string;
+}) {
+  return await deleteFile(options);
 }

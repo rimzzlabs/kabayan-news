@@ -3,7 +3,7 @@ import { formatDistance } from "@/lib/date";
 import { pipe } from "@mobily/ts-belt";
 import { Calendar1Icon, User2Icon } from "lucide-react";
 
-export function NewsCommentListItem(props: NewsComment) {
+export function ArticleCommentListItem(props: NewsComment) {
   return (
     <Card>
       <CardHeader>
