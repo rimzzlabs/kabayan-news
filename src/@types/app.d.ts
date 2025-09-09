@@ -34,6 +34,13 @@ declare global {
     signal?: AbortSignal;
     throwOnError?: boolean;
   }>;
+
+  type DashboardCardsCounterProps = {
+    news: number;
+    aspiration: number;
+    aspirationProcessed: number;
+    aspirationCompleted: number;
+  };
 }
 
 export {};

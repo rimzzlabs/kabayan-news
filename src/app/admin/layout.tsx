@@ -9,7 +9,7 @@ export default function Layout(props: PropsWithChildren) {
       <DashboardSidebar />
       <SidebarInset>
         <DashboardNavbar />
-        <main className="p-6">{props.children}</main>
+        <div className="p-6">{props.children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

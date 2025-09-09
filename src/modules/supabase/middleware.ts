@@ -94,9 +94,11 @@ export async function updateSession(request: NextRequest) {
   let isAdminPage = pathname.startsWith("/admin");
 
   if (isUserAdmin) {
-    let url = request.nextUrl.clone();
-    url.pathname = "/admin";
-    return NextResponse.redirect(url);
+    if (pathname.includes("/aspiration/new")) {
+      let url = request.nextUrl.clone();
+      url.pathname = "/admin";
+      return NextResponse.redirect(url);
+    }
   }
 
   if (!isUserAdmin && isAdminPage) {
