@@ -1,8 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAspirationCategories, getAspirations } from "./browser-query";
 import { createClient } from "../supabase/client";
-import { createAspirationAction, removeAspirationAction } from "./actions";
-import type { CreateAspirationSchema } from "./zod-schema";
+import {
+  createAspirationAction,
+  removeAspirationAction,
+  updateAspirationAction,
+} from "./actions";
+import type {
+  CreateAspirationSchema,
+  UpdateAspirationSchema,
+} from "./zod-schema";
 
 let client = createClient();
 
@@ -76,6 +83,24 @@ export function useRemoveAspiration() {
   return useMutation({
     mutationFn: async (payload: { aspirationId: string }) => {
       let res = await removeAspirationAction(payload);
+      if (res.error) throw new Error(res.message);
+
+      return res.result;
+    },
+    onSettled: async () => {
+      await qc.invalidateQueries({ queryKey: ["get-aspirations"] });
+    },
+  });
+}
+
+export function useUpdateAspiration() {
+  let qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (
+      payload: Partial<Omit<UpdateAspirationSchema, "id">> & { id: string },
+    ) => {
+      let res = await updateAspirationAction(payload);
       if (res.error) throw new Error(res.message);
 
       return res.result;

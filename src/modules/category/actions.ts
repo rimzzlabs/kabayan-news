@@ -3,6 +3,7 @@
 import { failedAction, successAction } from "@/lib/action";
 import { createClient } from "../supabase/server";
 import type { CreateCategorySchema, UpdateCategorySchema } from "./zod-schema";
+import { D, F, pipe } from "@mobily/ts-belt";
 
 export async function createCategoryAction(payload: CreateCategorySchema) {
   let client = await createClient();
@@ -21,18 +22,22 @@ export async function createCategoryAction(payload: CreateCategorySchema) {
   return successAction({ message: "Berhasil membuat kategori" });
 }
 
-export async function updateCategoryAction(
-  payload: { id: string } & Partial<Omit<UpdateCategorySchema, "id">>,
-) {
+export async function updateCategoryAction({
+  id,
+  ...payload
+}: { id: string } & Partial<Omit<UpdateCategorySchema, "id">>) {
   let client = await createClient();
 
-  let res = await client
-    .from("kategori")
-    .update({
+  let payloadValue = pipe(
+    {
       nama: payload.name,
       deskripsi: payload.description,
-    })
-    .eq("id", payload.id);
+    },
+    D.filter((value) => value !== null || value !== undefined),
+    F.toMutable,
+  );
+
+  let res = await client.from("kategori").update(payloadValue).eq("id", id);
 
   if (res.error) {
     console.info("Failed category update ", res.error);

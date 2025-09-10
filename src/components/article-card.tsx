@@ -50,6 +50,7 @@ export function ArticleCard(props: ArticleCardProps) {
                 variant={match<string, BadgeVariants>(props.status)
                   .with("selesai", () => "success")
                   .with(P.union("diverifikasi", "diproses"), () => "warning")
+                  .with("ditolak", () => "destructive")
                   .otherwise(() => "outline")}
               >
                 {title(props.status)}

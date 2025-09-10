@@ -15,3 +15,24 @@ export const createAspirationSchema = z.object({
   category: z.string().min(1, "Pilih kategori aspirasi"),
   imgUrl: z.string().optional(),
 });
+
+export type UpdateAspirationSchema = z.infer<typeof updateAspirationSchema>;
+export const updateAspirationSchema = z.object({
+  id: z.string().min(1, "Tidak ada ID aspirasi"),
+  title: z
+    .string()
+    .min(1, "Masukan judul aspirasi anda")
+    .min(10, "Minimal 10 karakter")
+    .max(100, "Judul aspirasi maksimal 100 karakter"),
+  description: z
+    .string()
+    .min(1, "Masukan deskripsi aspirasi anda")
+    .min(20, "Minimal 20 karakter")
+    .max(1000, "Maksimal 1000 karakter"),
+  status: z.enum(
+    ["dikirim", "diverifikasi", "diproses", "ditolak", "selesai"],
+    "Pilih status aspirasi",
+  ),
+  category: z.string().min(1, "Pilih kategori aspirasi"),
+  imgUrl: z.string().optional(),
+});

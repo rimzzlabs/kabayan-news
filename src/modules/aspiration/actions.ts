@@ -2,8 +2,12 @@
 
 import { failedAction, successAction } from "@/lib/action";
 import { createClient } from "../supabase/server";
-import type { CreateAspirationSchema } from "./zod-schema";
+import type {
+  CreateAspirationSchema,
+  UpdateAspirationSchema,
+} from "./zod-schema";
 import { revalidatePath } from "next/cache";
+import { D, F, pipe } from "@mobily/ts-belt";
 
 export async function createAspirationAction(payload: CreateAspirationSchema) {
   let supabase = await createClient();
@@ -55,4 +59,32 @@ export async function removeAspirationAction(payloada: {
   revalidatePath("/aspiration");
 
   return successAction({ message: "Berhasil menghapus aspirasi" });
+}
+
+export async function updateAspirationAction({
+  id,
+  ...payload
+}: Partial<Omit<UpdateAspirationSchema, "id">> & { id: string }) {
+  let supabase = await createClient();
+
+  let payloadValue = pipe(
+    {
+      judul: payload.title,
+      deskripsi: payload.description,
+      kategori_id: payload.category,
+      foto_url: payload.imgUrl,
+      status: payload.status,
+    },
+    D.filter((value) => value !== null || value !== undefined),
+    F.toMutable,
+  );
+
+  let res = await supabase.from("aspirasi").update(payloadValue).eq("id", id);
+
+  if (res.error) {
+    console.info("Failed aspiration update ", res.error);
+    return failedAction("Gagal memperbarui aspirasi");
+  }
+
+  return successAction({ message: "Berhasil memperbarui aspirasi" });
 }
