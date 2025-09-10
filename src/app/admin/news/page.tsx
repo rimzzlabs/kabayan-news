@@ -27,7 +27,11 @@ export default async function News(props: TPageProps) {
         </ButtonLink>
       </div>
 
-      <NewsTable news={newsQuery.data ?? []} count={newsQuery.count ?? 0} />
+      <NewsTable
+        page={page}
+        news={newsQuery.data ?? []}
+        count={newsQuery.count ?? 0}
+      />
     </Fragment>
   );
 }

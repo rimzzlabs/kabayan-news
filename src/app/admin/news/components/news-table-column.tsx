@@ -46,7 +46,10 @@ export const newsTableColumn = [
       );
     },
   }),
-  ch.accessor("kategori.nama", { header: "Kategori" }),
+  ch.accessor("kategori.nama", {
+    header: "Kategori",
+    cell: (f) => f.getValue() ?? "-",
+  }),
   ch.accessor("komentar", {
     header: "Jumlah komentar",
     cell: (f) => pipe(f.getValue().length, String, S.append(" Komentator")),

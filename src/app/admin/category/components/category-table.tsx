@@ -1,7 +1,6 @@
 "use client";
 
 import { useTable } from "@/hooks/use-table";
-import { newsTableColumn } from "./news-table-column";
 import {
   Table,
   TableBody,
@@ -13,39 +12,40 @@ import {
 import { flexRender } from "@tanstack/react-table";
 import { PlaceholderTableEmpty } from "@/components/placeholder-table-empty";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useNews } from "@/modules/news/hooks";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { F, O, pipe } from "@mobily/ts-belt";
 import { DataTablePagination } from "@/components/data-table-pagination";
 import { Fragment } from "react";
+import { categoryTableColumn } from "./category-table-column";
+import type { Tables } from "@/modules/supabase/types";
+import { useCategories } from "@/modules/category/hooks";
 
-let limit = 10;
-
-export function NewsTable(props: {
-  news: Array<News>;
+export function CategoryTable(props: {
+  categories: Array<Tables<"kategori">>;
   count: number;
-  page: number;
+  initialPage: number;
 }) {
   let [page] = useQueryState("page", parseAsInteger.withDefault(1));
-  let newsQuery = useNews({
+
+  let categoriesQuery = useCategories({
     page,
-    limit,
+    limit: 10,
     initialData:
-      props.page === page
-        ? { result: props.news, count: props.count }
+      props.initialPage === page
+        ? { result: props.categories, count: props.count }
         : undefined,
   });
 
   let data = pipe(
-    newsQuery.data?.result,
+    categoriesQuery.data?.result,
     O.fromNullable,
     O.mapWithDefault([], F.identity),
     F.toMutable,
   );
-  let table = useTable({ data, columns: newsTableColumn });
+  let table = useTable({ data, columns: categoryTableColumn });
 
-  let totalPages = Math.ceil((newsQuery.data?.count ?? 0) / limit) || 1;
-  let isEmpty = props.news.length === 0;
+  let totalPages = Math.ceil((categoriesQuery.data?.count ?? 0) / 10) || 1;
+  let isEmpty = data.length === 0;
 
   return (
     <Fragment>
@@ -70,9 +70,9 @@ export function NewsTable(props: {
           <TableBody>
             {isEmpty && (
               <PlaceholderTableEmpty
-                colSpan={newsTableColumn.length}
-                title="Berita tidak ditemukan"
-                description="Tidak ada berita yang dapat ditampilkan"
+                colSpan={categoryTableColumn.length}
+                title="Kategori tidak ditemukan"
+                description="Tidak ada kategori yang dapat ditampilkan"
               />
             )}
 
