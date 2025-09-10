@@ -19,7 +19,7 @@ export function RecentAspirationList() {
   });
 
   let aspirations = pipe(
-    aspirationsQuery.data?.data,
+    aspirationsQuery.data?.result,
     O.fromNullable,
     O.mapWithDefault([], F.identity),
     F.toMutable,

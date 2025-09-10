@@ -7,12 +7,16 @@ import type { CreateAspirationSchema } from "./zod-schema";
 let client = createClient();
 
 export function useAspirations(
-  options?: OptionalPagination & { userId?: string },
+  options?: OptionalPagination & {
+    userId?: string;
+    initialData?: { count: number; result: Array<Aspiration> };
+  },
 ) {
   return useQuery({
+    initialData: options?.initialData,
     queryKey: [
       "get-aspirations",
-      options?.userId,
+      options?.userId ?? null,
       options?.page,
       options?.limit,
     ] as const,
@@ -21,10 +25,11 @@ export function useAspirations(
       let res = await getAspirations(client, {
         page,
         limit,
-        userId,
         signal: ctx.signal,
+        throwOnError: true,
+        userId: userId ?? undefined,
       });
-      return res;
+      return { count: res.count, result: res.data };
     },
   });
 }
