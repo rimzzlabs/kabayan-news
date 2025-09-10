@@ -15,7 +15,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { F, O, pipe } from "@mobily/ts-belt";
 import { DataTablePagination } from "@/components/data-table-pagination";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { categoryTableColumn } from "./category-table-column";
 import type { Tables } from "@/modules/supabase/types";
 import { useCategories } from "@/modules/category/hooks";
@@ -25,7 +25,7 @@ export function CategoryTable(props: {
   count: number;
   initialPage: number;
 }) {
-  let [page] = useQueryState("page", parseAsInteger.withDefault(1));
+  let [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
   let categoriesQuery = useCategories({
     page,
@@ -46,6 +46,13 @@ export function CategoryTable(props: {
 
   let totalPages = Math.ceil((categoriesQuery.data?.count ?? 0) / 10) || 1;
   let isEmpty = data.length === 0;
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: watch only page and isEmpty
+  useEffect(() => {
+    if (isEmpty && page > 1) {
+      setPage((prev) => prev - 1);
+    }
+  }, [isEmpty, page]);
 
   return (
     <Fragment>

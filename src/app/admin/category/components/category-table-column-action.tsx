@@ -101,7 +101,10 @@ export function CategoryTableColumnAction(props: Tables<"kategori">) {
       <DropdownMenuContent align="end">
         <AlertDialog open={updateOpen} onOpenChange={setUpdateOpen}>
           <AlertDialogTrigger asChild>
-            <DropdownMenuItem onSelect={preventDefault}>
+            <DropdownMenuItem
+              onSelect={preventDefault}
+              disabled={updateCategory.isPending || removeCategory.isPending}
+            >
               <PenIcon /> Edit
             </DropdownMenuItem>
           </AlertDialogTrigger>
@@ -190,7 +193,10 @@ export function CategoryTableColumnAction(props: Tables<"kategori">) {
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <DropdownMenuItem onSelect={preventDefault}>
+            <DropdownMenuItem
+              onSelect={preventDefault}
+              disabled={updateCategory.isPending || removeCategory.isPending}
+            >
               <TrashIcon /> Hapus
             </DropdownMenuItem>
           </AlertDialogTrigger>
