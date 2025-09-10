@@ -142,7 +142,7 @@ export function SignUpForm() {
           />
         </CardContent>
 
-        <CardFooter className="pt-5">
+        <CardFooter>
           <Button disabled={disableButton} className="ml-auto">
             Daftar
           </Button>

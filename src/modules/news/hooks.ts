@@ -27,7 +27,6 @@ export function useInfiniteNews(initialData?: InfiniteNewsInitialData) {
   let [limit] = useQueryState("limit", parseAsInteger.withDefault(10));
 
   return useInfiniteQuery({
-    staleTime: Infinity,
     initialData: initialData
       ? {
           pages: [

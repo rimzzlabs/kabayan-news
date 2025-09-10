@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { getAspirationCategories, getAspirations } from "./browser-query";
 import { createClient } from "../supabase/client";
 import {
@@ -10,8 +15,16 @@ import type {
   CreateAspirationSchema,
   UpdateAspirationSchema,
 } from "./zod-schema";
+import { parseAsInteger, useQueryState } from "nuqs";
 
 let client = createClient();
+
+type InfiniteAspirationsInitialData = {
+  result: Array<Aspiration>;
+  count: number;
+  page: number;
+  limit: number;
+};
 
 export function useAspirations(
   options?: OptionalPagination & {
@@ -37,6 +50,51 @@ export function useAspirations(
         userId: userId ?? undefined,
       });
       return { count: res.count, result: res.data };
+    },
+  });
+}
+
+export function useInfiniteAspirations(
+  initialData?: InfiniteAspirationsInitialData,
+) {
+  let [limit] = useQueryState("limit", parseAsInteger.withDefault(10));
+
+  return useInfiniteQuery({
+    initialData: initialData
+      ? {
+          pages: [
+            {
+              result: initialData.result,
+              limit: initialData.limit,
+              total: initialData.count,
+              page: initialData.page,
+            },
+          ],
+          pageParams: [],
+        }
+      : undefined,
+    queryKey: ["get-infinite-aspirations", limit] as const,
+    queryFn: async (ctx) => {
+      let [, limit] = ctx.queryKey;
+
+      let res = await getAspirations(client, {
+        limit,
+        page: ctx.pageParam,
+        signal: ctx.signal,
+      });
+      return {
+        result: res.data ?? [],
+        total: res.count ?? 0,
+        page: ctx.pageParam,
+        limit,
+      };
+    },
+    initialPageParam: 0,
+    getPreviousPageParam: (firstPage) => firstPage.page - 1,
+    getNextPageParam: (lastPage) => {
+      let { page, total, limit } = lastPage;
+      let loaded = (page + 1) * limit;
+      return loaded < total ? page + 1 : undefined;
     },
   });
 }

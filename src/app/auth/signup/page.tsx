@@ -10,8 +10,8 @@ import { SignUpForm } from "./components/signup-form";
 
 export default function SignUp() {
   return (
-    <section className="h-[calc(100vh-4rem)] grid place-items-center py-6">
-      <Card className="w-11/12 mx-auto max-w-xl">
+    <section className="min-h-[calc(100vh-4rem)] grid place-items-center pt-6 pb-6">
+      <Card className="w-11/12 mx-auto max-w-xl pb-2">
         <CardHeader>
           <CardTitle>Daftar ke aplikasi</CardTitle>
           <CardDescription>
@@ -22,7 +22,7 @@ export default function SignUp() {
 
         <SignUpForm />
 
-        <CardFooter className="justify-center border-t">
+        <CardFooter className="justify-center border-t pt-2!">
           <p className="text-sm font-medium">
             Sudah punya akun?{" "}
             <ButtonLink

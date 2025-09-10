@@ -11,7 +11,7 @@ import { ButtonLink } from "@/components/ui/button";
 export default function SignIn() {
   return (
     <section className="h-[calc(100vh-4rem)] grid place-items-center">
-      <Card className="w-11/12 mx-auto max-w-md">
+      <Card className="w-11/12 mx-auto max-w-md pb-2">
         <CardHeader>
           <CardTitle>Login ke aplikasi</CardTitle>
           <CardDescription>
@@ -21,7 +21,7 @@ export default function SignIn() {
 
         <SignInForm />
 
-        <CardFooter className="justify-center border-t">
+        <CardFooter className="justify-center border-t pt-2!">
           <p className="text-sm font-medium">
             Belum punya akun?{" "}
             <ButtonLink

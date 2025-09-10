@@ -10,7 +10,12 @@ import {
 import { formatDate } from "@/lib/date";
 import { trimParagraph } from "@/lib/string";
 import { pipe } from "@mobily/ts-belt";
-import { ImageOff, MessageCircle } from "lucide-react";
+import {
+  ImageOff,
+  MegaphoneIcon,
+  MessageCircle,
+  NewspaperIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { title } from "radash";
 import { match, P } from "ts-pattern";
@@ -92,8 +97,19 @@ export function ArticleCard(props: ArticleCardProps) {
       </CardHeader>
 
       <CardFooter className="mt-auto">
-        <div className="inline-flex gap-4">
-          <div className="inline-flex items-center gap-2 text-muted-foreground">
+        <div className="inline-flex gap-4 items-center">
+          <div className="inline-flex items-center gap-1 text-muted-foreground">
+            {props.type === "news" ? (
+              <NewspaperIcon className="size-3.5" />
+            ) : (
+              <MegaphoneIcon className="size-3.5" />
+            )}
+            <span className="text-xs font-medium">
+              {props.type === "news" ? "Berita" : "Aspirasi"}
+            </span>
+          </div>
+
+          <div className="inline-flex items-center gap-1 text-muted-foreground">
             <MessageCircle className="size-3.5" />
             <span className="text-xs font-medium">
               {props.komentar.length} Komentar

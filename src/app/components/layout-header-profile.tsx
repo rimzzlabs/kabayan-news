@@ -22,9 +22,11 @@ import {
 } from "lucide-react";
 import { LayoutHeaderProfileLogout } from "./layout-header-profile-logout";
 import { title } from "radash";
+import { usePathname } from "next/navigation";
 
 export function LayoutHeaderProfile() {
   let user = useUser();
+  let pathname = usePathname();
   let isClient = useIsClient();
 
   if (!isClient || user.isPending || user.isError) {
@@ -36,6 +38,7 @@ export function LayoutHeaderProfile() {
   }
 
   if (!user.data) {
+    if (pathname.includes("/signin")) return null;
     return (
       <ButtonLink href="/auth/signin">
         <LogInIcon />
