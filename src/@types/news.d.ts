@@ -7,6 +7,7 @@ type News = {
   slug: string;
   tanggal_publikasi: string | null;
   tanggal_dibuat: string;
+  status: string | null;
   kategori: {
     id: string;
     nama: string;

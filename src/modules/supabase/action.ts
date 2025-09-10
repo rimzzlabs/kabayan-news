@@ -1,19 +1,18 @@
 "use server";
 
 import { failedAction, successAction } from "@/lib/action";
-import { getServerSession } from "../auth/query";
+import { getServerUser } from "../auth/query";
 import { deleteFile, uploadFile } from "./utils";
 
-export async function uploadImage(fd: FormData) {
+export async function uploadImage(fd: FormData, bucketName: string) {
   let file = fd.get("file") as File | null;
   if (!file) return failedAction("File not found");
 
-  let session = await getServerSession();
-  if (!session) return failedAction("Session not found");
+  let user = await getServerUser();
+  if (!user) return failedAction("Session not found");
 
-  let userId = session.user.id;
-
-  let res = await uploadFile({ file, userId, bucketName: "foto-aspirasi" });
+  let userId = user.id;
+  let res = await uploadFile({ file, userId, bucketName });
 
   if (!res) return failedAction("Upload failed");
 

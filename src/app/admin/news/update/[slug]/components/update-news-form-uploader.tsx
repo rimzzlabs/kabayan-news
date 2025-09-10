@@ -8,18 +8,31 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, ImagePlus, Trash2, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import { useFormContext, useWatch } from "react-hook-form";
-import type { CreateAspirationSchema } from "@/modules/aspiration/zod-schema";
 import { uploadImage, deleteImage } from "@/modules/supabase/action";
 import { withSonnerPromise } from "@/lib/sonner";
 import { cn } from "@/lib/utils";
+import type { UpdateNewsSchema } from "@/modules/news/zod-schema";
+import type { getServerNewsDetail } from "@/modules/news/query";
+import { match, P } from "ts-pattern";
+import { A, F, pipe, S } from "@mobily/ts-belt";
 
-export function CreateAspirationFormUploader() {
-  let form = useFormContext<CreateAspirationSchema>();
+type TProps = Pick<
+  NonNullable<Awaited<ReturnType<typeof getServerNewsDetail>>>,
+  "foto_url"
+>;
+
+export function UpdateNewsFormUploader(props: TProps) {
+  let initialFilePath = match(props.foto_url)
+    .with(P.nullish, F.identity)
+    .otherwise((url) => pipe(url, S.split("/"), A.sliceToEnd(-2), A.join("/")));
+
+  let form = useFormContext<UpdateNewsSchema>();
+
+  let [isBusy, setIsBusy] = useState(false);
+  let [filePath, setFilePath] = useState<string | null>(initialFilePath);
+  let [imageUrl, setImageUrl] = useState<string | null>(props.foto_url);
 
   let selectedImageUrl = useWatch({ control: form.control, name: "imgUrl" });
-  let [isBusy, setIsBusy] = useState(false);
-  let [filePath, setFilePath] = useState<string | null>(null);
-  let [imageUrl, setImageUrl] = useState<string | null>(null);
 
   let onDrop = withSonnerPromise(
     async (acceptedFiles: Array<File>) => {
@@ -33,7 +46,7 @@ export function CreateAspirationFormUploader() {
         let fd = new FormData();
         fd.set("file", file);
 
-        let res = await uploadImage(fd, "foto-aspirasi");
+        let res = await uploadImage(fd, "foto-berita");
 
         setIsBusy(false);
         if (res.error) throw new Error("Failed to upload image");
@@ -73,9 +86,6 @@ export function CreateAspirationFormUploader() {
       error: "Gagal menghapus gambar",
     },
   );
-
-  console.info("selectedImageUrl", selectedImageUrl);
-  console.info("filePath", filePath);
 
   let onReplace = () => dropZone.open();
 

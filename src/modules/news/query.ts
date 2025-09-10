@@ -11,37 +11,15 @@ export async function getServerNews(
   let from = (page - 1) * limit;
   let to = from + limit - 1;
 
-  if (options?.userId) {
-    let res = await client
-      .from("berita")
-      .select(
-        `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat,
+  let query = client
+    .from("berita")
+    .select(
+      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat,
          kategori (id, nama),
          komentar (id, isi, tanggal_komentar,
          user: profiles ( id, nama, foto_profil )
          )
         `,
-        {
-          count: "exact",
-        },
-      )
-      .eq("status", "published")
-      .eq("user_id", options.userId)
-      .order("tanggal_publikasi", { ascending: false })
-      .range(from, to);
-
-    return res.data ?? [];
-  }
-
-  let res = await client
-    .from("berita")
-    .select(
-      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat,
-       kategori (id, nama),
-       komentar (id, isi, tanggal_komentar,
-       user: profiles ( id, nama, foto_profil )
-       )
-      `,
       {
         count: "exact",
       },
@@ -49,8 +27,11 @@ export async function getServerNews(
     .eq("status", "published")
     .order("tanggal_publikasi", { ascending: false })
     .range(from, to);
+  if (options?.userId) {
+    query = query.eq("user_id", options.userId);
+  }
 
-  return res.data ?? [];
+  return await query;
 }
 
 export async function getServerNewsDetail(
@@ -61,7 +42,7 @@ export async function getServerNewsDetail(
   let newsQuery = await client
     .from("berita")
     .select(
-      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat,
+      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat, status,
        kategori (id, nama)
       `,
       {

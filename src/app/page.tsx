@@ -5,7 +5,7 @@ import { NewsList } from "./components/news-list";
 
 export default async function Home() {
   let client = await createClient();
-  let news = await getServerNews(client);
+  let newsQuery = await getServerNews(client);
 
   return (
     <div className="pt-8 pb-8">
@@ -13,7 +13,7 @@ export default async function Home() {
         Berita Terkini<span className="sr-only">Kabayan News</span>
       </Title>
 
-      <NewsList news={news} />
+      <NewsList news={newsQuery.data ?? []} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ export default function Layout(props: PropsWithChildren) {
   return (
     <SidebarProvider>
       <DashboardSidebar />
+
       <SidebarInset>
         <DashboardNavbar />
         <div className="p-6">{props.children}</div>

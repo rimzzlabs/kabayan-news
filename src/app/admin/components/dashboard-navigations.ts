@@ -1,15 +1,15 @@
 import {
-  ListPlusIcon,
   Megaphone,
   NewspaperIcon,
   type LucideIcon,
+  LayoutListIcon,
+  LayoutDashboardIcon,
 } from "lucide-react";
 
 export type DashboardNavigation = {
   label: string;
   pathname: string;
   icon: LucideIcon;
-  role: string;
   subItems?: Array<{
     label: string;
     pathname: string;
@@ -18,22 +18,8 @@ export type DashboardNavigation = {
 };
 
 export const DASHBOARD_NAVIGATIONS = [
-  {
-    icon: NewspaperIcon,
-    role: "user",
-    label: "Berita",
-    pathname: "/admin/news",
-  },
-  {
-    role: "user",
-    icon: ListPlusIcon,
-    label: "Buat berita baru",
-    pathname: "/admin/news/new",
-  },
-  {
-    icon: Megaphone,
-    role: "admin",
-    label: "Aspirasi warga",
-    pathname: "/admin/aspiration",
-  },
+  { icon: LayoutDashboardIcon, label: "Dashboard", pathname: "/admin" },
+  { icon: NewspaperIcon, label: "Berita", pathname: "/admin/news" },
+  { icon: LayoutListIcon, label: "Kategori", pathname: "/admin/category" },
+  { icon: Megaphone, label: "Aspirasi warga", pathname: "/admin/aspiration" },
 ] satisfies DashboardNavigation[];

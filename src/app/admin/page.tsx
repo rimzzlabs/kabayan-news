@@ -27,7 +27,7 @@ export default async function Admin() {
       <DashboardCardsCounter {...counters} />
 
       <section className="grid gap-4 lg:gap-2 xl:grid-cols-2 pt-4">
-        <DashboardNewsList news={news} />
+        <DashboardNewsList news={news.data ?? []} />
         <DashboardAspirationList aspirations={aspirations.data ?? []} />
       </section>
     </Fragment>

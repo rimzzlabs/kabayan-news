@@ -1,0 +1,22 @@
+import { Title } from "@/components/title";
+import { ButtonLink } from "@/components/ui/button";
+import { ArrowLeft, MessageCircleOff } from "lucide-react";
+
+export default function NotFound() {
+  return (
+    <section className="h-[calc(100vh-8rem)] grid place-items-center">
+      <div className="flex flex-col items-center text-center max-w-xl w-full">
+        <MessageCircleOff className="stroke-muted-foreground size-16" />
+        <Title className="pt-3">Berita Tidak Ditemukan</Title>
+        <p className="font-medium text-muted-foreground pt-2 pb-5 text-balance">
+          Oops, nampaknya berita yang Anda cari tidak dapat kami temukan,
+          pastikan URL yang Anda masukkan benar.
+        </p>
+
+        <ButtonLink href="/admin/news">
+          <ArrowLeft /> Semua berita
+        </ButtonLink>
+      </div>
+    </section>
+  );
+}

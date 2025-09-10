@@ -3,7 +3,7 @@ import { formatDate } from "@/lib/date";
 import { getServerNewsDetail } from "@/modules/news/query";
 import { createClient } from "@/modules/supabase/server";
 import { createClient as createBrowserClient } from "@/modules/supabase/client";
-import { A, F, pipe, S } from "@mobily/ts-belt";
+import { A, F, O, pipe, S } from "@mobily/ts-belt";
 import { ArrowLeft, Calendar1Icon, MessageCircleIcon } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { getNews } from "@/modules/news/browser-query";
@@ -15,7 +15,9 @@ export async function generateStaticParams() {
   let client = createBrowserClient();
   let news = await getNews(client, { limit: 100 });
   return pipe(
-    news,
+    news.data,
+    O.fromNullable,
+    O.mapWithDefault([], F.identity),
     A.map((n) => ({ slug: n.slug })),
     F.toMutable,
   );

@@ -1,5 +1,13 @@
 import { createClient } from "../supabase/server";
 
+export async function getServerUser() {
+  let supabase = await createClient();
+  let user = await supabase.auth.getUser();
+
+  if (!user.data.user) return null;
+  return user.data.user;
+}
+
 export async function getServerSession() {
   let supabase = await createClient();
 

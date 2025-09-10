@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Sidebar,
   SidebarContent,
@@ -7,32 +5,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-  SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
 
 import { DashboardSidebarLogout } from "./dashboard-sidebar-logout";
-import dynamic from "next/dynamic";
-import { Fragment } from "react";
-
-let DashboardSidebarMenu = dynamic(
-  () => import("./dashboard-sidebar-menu").then((m) => m.DashboardSidebarMenu),
-  {
-    ssr: false,
-    loading: () => {
-      return (
-        <Fragment>
-          <SidebarMenuSkeleton />
-          <SidebarMenuSkeleton />
-          <SidebarMenuSkeleton />
-        </Fragment>
-      );
-    },
-  },
-);
+import { DashboardSidebarMenu } from "./dashboard-sidebar-menu";
 
 export function DashboardSidebar() {
   return (
-    <Sidebar>
+    <Sidebar variant="sidebar">
       <SidebarHeader className="px-6 h-16 justify-center">
         <p className="text-sm font-semibold text-muted-foreground">
           Kabayan News
