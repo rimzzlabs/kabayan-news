@@ -4,6 +4,7 @@ import { failedAction, successAction } from "@/lib/action";
 import { createClient } from "../supabase/server";
 import type { CreateNewsSchema, UpdateNewsSchema } from "./zod-schema";
 import { revalidatePath } from "next/cache";
+import { match } from "ts-pattern";
 
 export async function createNewsAction(payload: CreateNewsSchema) {
   let supabase = await createClient();
@@ -31,7 +32,9 @@ export async function createNewsAction(payload: CreateNewsSchema) {
   return successAction({ message: "Berhasil membuat berita" });
 }
 
-export async function updateNewsAction(payload: UpdateNewsSchema) {
+export async function updateNewsAction(
+  payload: { id: string } & Partial<Omit<UpdateNewsSchema, "id">>,
+) {
   let supabase = await createClient();
   let user = await supabase.auth.getUser();
 
@@ -39,15 +42,27 @@ export async function updateNewsAction(payload: UpdateNewsSchema) {
 
   if (!userId) return failedAction("Unauthorized");
 
-  let res = await supabase
-    .from("berita")
-    .update({
+  let payloadValue = match(payload.status)
+    .with("published", () => ({
       judul: payload.title,
       isi: payload.description,
       kategori_id: payload.category,
       foto_url: payload.imgUrl,
       status: payload.status,
-    })
+      tanggal_publikasi: new Date().toISOString(),
+    }))
+    .otherwise(() => ({
+      judul: payload.title,
+      isi: payload.description,
+      kategori_id: payload.category,
+      foto_url: payload.imgUrl,
+      status: payload.status,
+      tanggal_publikasi: null,
+    }));
+
+  let res = await supabase
+    .from("berita")
+    .update(payloadValue)
     .eq("id", payload.id);
 
   if (res.error) {

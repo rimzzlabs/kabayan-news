@@ -5,7 +5,7 @@ import { ImageOffIcon } from "lucide-react";
 import Image from "next/image";
 import { NewsTableColumnAction } from "./news-table-column-action";
 import { trimParagraph } from "@/lib/string";
-import { Badge } from "@/components/ui/badge";
+import { NewsTableColumnStatus } from "./news-table-column-status";
 
 let ch = createColumnHelper<News>();
 
@@ -32,18 +32,6 @@ export const newsTableColumn = [
           height={40}
           className="w-32 h-20 rounded-md object-cover"
         />
-      );
-    },
-  }),
-  ch.accessor("status", {
-    header: "Status",
-    cell: (f) => {
-      let status = f.getValue();
-
-      return (
-        <Badge variant={status === "published" ? "success" : "secondary"}>
-          {status === "published" ? "Dipublikasi" : "Draft"}
-        </Badge>
       );
     },
   }),
@@ -75,6 +63,10 @@ export const newsTableColumn = [
         O.fromNullable,
         O.mapWithDefault("-", formatDate("dd MMMM yyyy HH:mm:ss")),
       ),
+  }),
+  ch.accessor("status", {
+    header: "Status",
+    cell: (f) => <NewsTableColumnStatus {...f.row.original} />,
   }),
   ch.display({
     header: "Aksi",

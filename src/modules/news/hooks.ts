@@ -168,3 +168,28 @@ export function useUpdateNews() {
     },
   });
 }
+
+export function useUpdateNewsStatus() {
+  let qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: {
+      id: string;
+      status: "draft" | "published";
+    }) => {
+      let res = await updateNewsAction({
+        id: payload.id,
+        status: payload.status,
+      });
+      if (res.error) throw new Error(res.message);
+
+      return res.result;
+    },
+    onSettled: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["get-news"] }),
+        qc.invalidateQueries({ queryKey: ["get-infinite-news"] }),
+      ]);
+    },
+  });
+}
