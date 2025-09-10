@@ -20,6 +20,7 @@ export async function createNewsAction(payload: CreateNewsSchema) {
     kategori_id: payload.category,
     foto_url: payload.imgUrl,
     user_id: userId,
+    status: payload.status,
   });
 
   if (res.error) {

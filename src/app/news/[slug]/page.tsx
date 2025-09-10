@@ -13,7 +13,7 @@ import { ArticleDetailImage } from "@/components/article-detail-image";
 
 export async function generateStaticParams() {
   let client = createBrowserClient();
-  let news = await getNews(client, { limit: 100 });
+  let news = await getNews(client, { limit: 100, status: "published" });
   return pipe(
     news.data,
     O.fromNullable,
@@ -29,13 +29,13 @@ export default async function NewsPage(props: TPageProps) {
   let slug = params.slug;
   if (!slug) redirect("/");
 
-  let news = await getServerNewsDetail(client, slug);
+  let news = await getServerNewsDetail(client, { slug, status: "published" });
   if (!news) notFound();
 
   return (
     <div className="max-w-prose mx-auto">
       <article className="pt-8 pb-10">
-        <ButtonLink href="/" variant="secondary">
+        <ButtonLink href="/" variant="outline">
           <ArrowLeft />
           Kembali
         </ButtonLink>

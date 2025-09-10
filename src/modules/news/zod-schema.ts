@@ -12,6 +12,7 @@ export const createNewsSchema = z.object({
     .min(1, "Masukan deskripsi aspirasi anda")
     .min(20, "Minimal 20 karakter")
     .max(1000, "Maksimal 1000 karakter"),
+  status: z.enum(["draft", "published"], "Pilih status berita"),
   category: z.string().min(1, "Pilih kategori aspirasi"),
   imgUrl: z.string().optional(),
 });

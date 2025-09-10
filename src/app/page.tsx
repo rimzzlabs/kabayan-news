@@ -5,7 +5,7 @@ import { NewsList } from "./components/news-list";
 
 export default async function Home() {
   let client = await createClient();
-  let newsQuery = await getServerNews(client);
+  let newsQuery = await getServerNews(client, { status: "published" });
 
   return (
     <div className="pt-8 pb-8">

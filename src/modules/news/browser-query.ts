@@ -3,7 +3,8 @@ import type { SupabaseClient } from "../supabase/client";
 
 export async function getNews(
   client: SupabaseClient,
-  options?: BrowserQueryOptions & OptionalPagination & { userId?: string },
+  options?: BrowserQueryOptions &
+    OptionalPagination & { userId?: string; status?: "draft" | "published" },
 ) {
   let page = toInt(options?.page, 1);
   let limit = toInt(options?.limit, 10);
@@ -14,7 +15,7 @@ export async function getNews(
   let query = client
     .from("berita")
     .select(
-      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat,
+      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat, status,
          kategori (id, nama),
          komentar (id, isi, tanggal_komentar,
          user: profiles ( id, nama, foto_profil )
@@ -24,9 +25,12 @@ export async function getNews(
         count: "exact",
       },
     )
-    .eq("status", "published")
     .order("tanggal_publikasi", { ascending: false })
     .range(from, to);
+
+  if (options?.status) {
+    query = query.eq("status", options.status);
+  }
   if (options?.userId) {
     query = query.eq("user_id", options.userId);
   }
@@ -38,27 +42,6 @@ export async function getNews(
   }
 
   return await query;
-}
-
-export async function getNewsDetail(client: SupabaseClient, slug: string) {
-  let res = await client
-    .from("berita")
-    .select(
-      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat,
-       kategori (id, nama),
-       komentar (id, isi, tanggal_komentar,
-       user: profiles ( id, nama, foto_profil )
-       )
-      `,
-      {
-        count: "exact",
-      },
-    )
-    .eq("status", "published")
-    .eq("slug", slug)
-    .maybeSingle();
-
-  return res.data;
 }
 
 export async function getComments(

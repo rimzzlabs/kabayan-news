@@ -36,7 +36,7 @@ export default async function NewsPage(props: TPageProps) {
   return (
     <div className="max-w-prose mx-auto">
       <article className="pt-8 pb-10">
-        <ButtonLink href="/aspiration" variant="secondary">
+        <ButtonLink href="/aspiration" variant="outline">
           <ArrowLeft />
           Kembali
         </ButtonLink>

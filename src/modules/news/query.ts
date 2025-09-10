@@ -3,7 +3,7 @@ import type { SupabaseServerClient } from "../supabase/server";
 
 export async function getServerNews(
   client: SupabaseServerClient,
-  options?: QueryOptions,
+  options?: QueryOptions & { status?: "published" | "draft" },
 ) {
   let page = toInt(options?.page, 1);
   let limit = toInt(options?.limit, 10);
@@ -14,7 +14,7 @@ export async function getServerNews(
   let query = client
     .from("berita")
     .select(
-      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat,
+      `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat, status,
          kategori (id, nama),
          komentar (id, isi, tanggal_komentar,
          user: profiles ( id, nama, foto_profil )
@@ -24,9 +24,12 @@ export async function getServerNews(
         count: "exact",
       },
     )
-    .eq("status", "published")
     .order("tanggal_publikasi", { ascending: false })
     .range(from, to);
+
+  if (options?.status) {
+    query = query.eq("status", options.status);
+  }
   if (options?.userId) {
     query = query.eq("user_id", options.userId);
   }
@@ -36,10 +39,10 @@ export async function getServerNews(
 
 export async function getServerNewsDetail(
   client: SupabaseServerClient,
-  slug: string,
+  options: { slug: string; status?: "published" | "draft" },
 ) {
   // query the news, komentar only show counts
-  let newsQuery = await client
+  let query = client
     .from("berita")
     .select(
       `id, foto_url, judul, isi, slug, tanggal_publikasi, tanggal_dibuat, status,
@@ -49,9 +52,13 @@ export async function getServerNewsDetail(
         count: "exact",
       },
     )
-    .eq("status", "published")
-    .eq("slug", slug)
-    .maybeSingle();
+    .eq("slug", options.slug);
+
+  if (options.status) {
+    query = query.eq("status", options.status);
+  }
+
+  let newsQuery = await query.maybeSingle();
 
   if (!newsQuery.data) return null;
 

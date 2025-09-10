@@ -7,8 +7,12 @@ import {
 import { parseAsInteger, useQueryState } from "nuqs";
 import { getNews, getNewsCategories } from "./browser-query";
 import { createClient } from "../supabase/client";
-import { removeNewsAction, updateNewsAction } from "./actions";
-import type { UpdateNewsSchema } from "./zod-schema";
+import {
+  createNewsAction,
+  removeNewsAction,
+  updateNewsAction,
+} from "./actions";
+import type { CreateNewsSchema, UpdateNewsSchema } from "./zod-schema";
 
 let client = createClient();
 
@@ -64,16 +68,23 @@ export function useInfiniteNews(initialData?: InfiniteNewsInitialData) {
 
 export function useNews(
   options?: OptionalPagination & {
+    status?: "draft" | "published";
     initialData?: { count: number; result: Array<News> };
   },
 ) {
   return useQuery({
     initialData: options?.initialData,
-    queryKey: ["get-news", options?.page, options?.limit] as const,
+    queryKey: [
+      "get-news",
+      options?.status,
+      options?.page,
+      options?.limit,
+    ] as const,
     queryFn: async (ctx) => {
-      let [, page, limit] = ctx.queryKey;
+      let [, status, page, limit] = ctx.queryKey;
 
       let res = await getNews(client, {
+        status,
         page,
         limit,
         signal: ctx.signal,
@@ -116,6 +127,25 @@ export function useNewsCategories(options?: OptionalPagination) {
         signal: ctx.signal,
       });
       return res.data;
+    },
+  });
+}
+
+export function useCreateNews() {
+  let qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: CreateNewsSchema) => {
+      let res = await createNewsAction(payload);
+      if (res.error) throw new Error(res.message);
+
+      return res.result;
+    },
+    onSettled: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["get-news"] }),
+        qc.invalidateQueries({ queryKey: ["get-infinite-news"] }),
+      ]);
     },
   });
 }
