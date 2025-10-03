@@ -21,7 +21,6 @@ export type Database = {
           id: string
           judul: string
           kategori_id: string | null
-          lokasi: string | null
           slug: string
           status: string | null
           tanggal_kirim: string | null
@@ -33,7 +32,6 @@ export type Database = {
           id?: string
           judul: string
           kategori_id?: string | null
-          lokasi?: string | null
           slug: string
           status?: string | null
           tanggal_kirim?: string | null
@@ -45,7 +43,6 @@ export type Database = {
           id?: string
           judul?: string
           kategori_id?: string | null
-          lokasi?: string | null
           slug?: string
           status?: string | null
           tanggal_kirim?: string | null
@@ -236,7 +233,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      slugify: {
+        Args: { input: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
